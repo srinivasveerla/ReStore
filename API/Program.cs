@@ -11,7 +11,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 
-builder.Services.AddDbContext<StoreContext>(opt => {
+builder.Services.AddDbContext<StoreContext>(opt =>
+{
     opt.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
@@ -28,6 +29,10 @@ if (app.Environment.IsDevelopment())
 // thus removing this will not throw "Failed to determine the https port for redirect."
 // app.UseHttpsRedirection();
 
+app.UseCors(opt =>
+{
+    opt.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000");
+});
 // middleware for authorization
 app.UseAuthorization();
 
@@ -43,7 +48,7 @@ try
 }
 catch (Exception ex)
 {
-    logger.LogError(ex,"A problem occured bruvvv!!!");
+    logger.LogError(ex, "A problem occured bruvvv!!!");
 }
 
 app.Run();
