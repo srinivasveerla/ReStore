@@ -2,12 +2,10 @@ using API.Data;
 using API.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-
 namespace API.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class ProductsController : ControllerBase
+
+    public class ProductsController : BaseApiController
     {
         private readonly StoreContext _context;
         public ProductsController(StoreContext context)
@@ -16,7 +14,7 @@ namespace API.Controllers
 
         }
 
-        [HttpGet]
+        [HttpGet] // api/products -- products is coming from the controller name
         public async Task<ActionResult<List<Product>>> GetProducts()
         {
             return await _context.Products.ToListAsync();
@@ -25,7 +23,12 @@ namespace API.Controllers
         [HttpGet("{id}")] // api/products/3
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
-            return await _context.Products.FindAsync(id);
+            // this returned null, so the error was 204 - no content, which is not expectd behaviour
+            // as our requested product does't exist, so not found should be sent
+            // return await _context.Products.FindAsync(id);
+            var product =  await _context.Products.FindAsync(id);
+            if (product ==null) return NotFound();
+            return product;
         }
     }
 }
