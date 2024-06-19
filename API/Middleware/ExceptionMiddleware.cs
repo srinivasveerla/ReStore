@@ -20,6 +20,8 @@ namespace API.Middleware
             _next = next;
         }
 
+        // invoke/InvokeAsyc is neede for middlewares
+
         public async Task InvokeAsync(HttpContext context){
             try{
                 await _next(context);

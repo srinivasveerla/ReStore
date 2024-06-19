@@ -9,8 +9,9 @@ import {
   Typography,
 } from "@mui/material";
 import CustomSwitch from "./Switch";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { ShoppingCart } from "@mui/icons-material";
+import { useStoreContext } from "../context/StoreContext";
 // interface Props {
 //   theme: PaletteMode;
 //   checked: boolean;
@@ -35,28 +36,22 @@ interface Props {
 }
 
 export default function Header({ dark, HandleChange }: Props) {
-  // const [dark, setDark] = useState(false);
-  // //let theme: PaletteMode = dark ? "dark" : "light";
-
-  // function HandleChange() {
-  //   setDark((prevState) => {
-  //     return !prevState;
-  //   });
-  // }
+  const { basket } = useStoreContext();
+  const itemCount = basket?.items.reduce((sum, item) => sum + item.quantity, 0);
   return (
     <>
       <AppBar position="sticky" sx={{ mb: 4 }}>
         <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
           <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Typography
-            variant="h6"
-            component={NavLink}
-            to="/"
-            sx={{ mr: 4, color: "inherit", textDecoration: "none" }}
-          >
-            RE-STORE
-          </Typography>
-          <CustomSwitch checked={dark} HandleChange={HandleChange} />
+            <Typography
+              variant="h6"
+              component={NavLink}
+              to="/"
+              sx={{ mr: 4, color: "inherit", textDecoration: "none" }}
+            >
+              RE-STORE
+            </Typography>
+            <CustomSwitch checked={dark} HandleChange={HandleChange} />
           </Box>
           <List sx={{ display: "flex" }}>
             {leftLinks.map(({ title, path }) => (
@@ -64,35 +59,44 @@ export default function Header({ dark, HandleChange }: Props) {
                 key={path}
                 component={NavLink}
                 to={path}
-                sx={{ color: "inherit", typography: "h6",
+                sx={{
+                  color: "inherit",
+                  typography: "h6",
                   "&:hover": { color: "secondary.light" },
-                  '&.active': {
-                    color: "text.secondary"
-                  }
-                 }}
+                  "&.active": {
+                    color: "text.secondary",
+                  },
+                }}
               >
                 {title.toUpperCase()}
               </ListItem>
             ))}
           </List>
           <Box sx={{ display: "flex", alignItems: "center" }}>
-          <IconButton size="large" color="inherit" edge="start" sx={{ mr: 4 }}>
-            <Badge badgeContent="4" color="secondary">
-              <ShoppingCart />
-            </Badge>
-          </IconButton>
-          <List sx={{ display: "flex" }}>
-            {rightLinks.map(({ title, path }) => (
-              <ListItem
-                key={path}
-                component={NavLink}
-                to={path}
-                sx={{ color: "inherit", typography: "h6" }}
-              >
-                {title.toUpperCase()}
-              </ListItem>
-            ))}
-          </List>
+            <IconButton
+              size="large"
+              component={Link}
+              to="/basket"
+              color="inherit"
+              edge="start"
+              sx={{ mr: 4 }}
+            >
+              <Badge badgeContent={itemCount} color="secondary">
+                <ShoppingCart />
+              </Badge>
+            </IconButton>
+            <List sx={{ display: "flex" }}>
+              {rightLinks.map(({ title, path }) => (
+                <ListItem
+                  key={path}
+                  component={NavLink}
+                  to={path}
+                  sx={{ color: "inherit", typography: "h6" }}
+                >
+                  {title.toUpperCase()}
+                </ListItem>
+              ))}
+            </List>
           </Box>
         </Toolbar>
       </AppBar>
